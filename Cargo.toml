@@ -1,0 +1,51 @@
+[features]
+default = [] # default = ["space_editor"] would make space_editor enabled by default
+space_editor = [
+    "dep:space_editor",
+    "dep:bevy_egui",
+    "dep:transform-gizmo-bevy",
+]
+
+[dependencies]
+bevy = "0.17.3"
+bevy_egui = {version = "0.38.0", optional = true}
+
+# When we have lots of options we can put them into
+# this seperate dependencies section
+[dependencies.space_editor]
+optional = true
+git = "https://github.com/MiniMinerX/space_editor"
+branch = "dev-0.17-attempt-2"
+
+[dependencies.transform-gizmo-bevy]
+git = "https://github.com/MiniMinerX/transform-gizmo"
+branch = "dev-0.17"
+optional = true
+
+# In the future we will manually import space_editor
+# crates one-by-one so we can use space_editor prefabs
+# in game mode without importing the space_editor U
+# I also would like to leave egui as optional since
+# only the editor uses it. Egui can be laggy and I would
+# rather use bevy native ui systems in the future.
+
+[package]
+name = "my_keyboard_project"
+version = "0.1.0"
+edition = "2024"
+
+# Feature flags let us optionally compile certain code
+# The space editor feature will allow us to toggle
+# between game mode vs editor mode
+# When the feature is disabled,
+# the space_editor dependency will not be included
+
+# use cargo build  to build with default features
+# use cargo build --features space_editor to build
+# with the space editor feature enabled and default features
+# sometimes with linking errors you may need to rebuild the whole project
+# rebuild the whole project by running
+# cargo clean
+# or clean the top level with
+# cargo clean -p my_keyboard_project
+# and you can also delete the Cargo.lock file to force re-resolving dependencies
