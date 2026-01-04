@@ -2,9 +2,7 @@
 
 ## General structure:
 - ```main.rs``` : Declares all plugins(custom and default) and adds them to our app, also optionally adds some plugins for space editor feature if enabled.
-- ```player.rs``` : Spawns an entity with FPS Player on startup. Also includes an observer which, whenever an FPS Player is added to an entity (including startup), it checks if the entity FPS Player was added to
-  - (the root entity) has name, transform, visibility and adds them if it doesn't. Then it checks if the FPS Player has camera & head entities and adds them as child if it doesn't. If player crosshair doesn't exist,
-  - it adds a flat 2d mesh of a circle in front of the camera (crosshair).
+- ```player.rs``` : Spawns an entity with FPS Player on startup. Also includes an observer which, whenever an FPS Player is added to an entity (including startup), it checks if the entity FPS Player was added to (the root entity) has name, transform, visibility and adds them if it doesn't. Then it checks if the FPS Player has camera & head entities and adds them as child if it doesn't. If player crosshair doesn't exist, it adds a flat 2d mesh of a circle in front of the camera (crosshair).
 - ```keyboard_input.rs``` and ```mouse_input.rs``` : Handle the logic for keyboard input for movement(WASD) and mouse input for mouse look.
 - floor, hud_text, light, objects : Handle spawning things at startup.
 - ```editor_setup.rs``` : Sets up the editor at startup, 2d and 3d cameras for 3d orbit controls and 2d UI setup.
