@@ -5,14 +5,14 @@ use crate::player::FpsPlayer;
 pub struct KeyboardInputPlugin;
 
 impl Plugin for KeyboardInputPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_systems(Update, update_keyboard_movement);
-    }
+    fn build(&self, app: &mut App) {
+       app.add_systems(Update, update_keyboard_movement);
+   }
 }
 
 fn update_keyboard_movement(
    keyboard_input: Res<ButtonInput<KeyCode>>,
-   mut player_query: Query<&mut Transform, With<FpsPlayer>>,  
+   mut player_query: Query<&mut Transform, With<FpsPlayer>>,
 
 ) {
    let mut player_transform = match player_query.single_mut() {
@@ -52,9 +52,9 @@ fn update_keyboard_movement(
    if keyboard_input.pressed(KeyCode::ShiftLeft) {
       movement.y -= 1.0;
    }
-
+   
    let mut speed = 0.22;
-
+   
    // speed control
    if keyboard_input.pressed(KeyCode::ControlLeft) {
       speed = 1.0;

@@ -65,7 +65,7 @@ fn setup_editor(
       PrimaryEguiContext,
       EditorCameraMarker,
       // Set random render layer so egui 3d cam does minimal work
-      RenderLayers::from_layers(&[10000]),  
+      RenderLayers::from_layers(&[10000]),
       Msaa::Off,
     ));
 }

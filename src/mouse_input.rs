@@ -18,92 +18,94 @@ impl Plugin for MouseInputPlugin {
 #[derive(Resource, Debug, Clone, Reflect)]
 pub struct MouseLookSettings {
     pub sensitivity: Vec2,
-    pub focus: MouseTabFocus,
+    pub focus: MouseTabFocus,
 }
 
 impl Default for MouseLookSettings {
-    fn default() -> Self {
-        Self {
-            sensitivity: Vec2::new(0.003, 0.002),
-            focus: MouseTabFocus::None,
-        }
-    }
+    fn default() -> Self {
+      Self {
+          sensitivity: Vec2::new(0.003, 0.002),
+          focus: MouseTabFocus::None,
+      }
+    }
 }
 
 #[derive(Reflect, Default, Clone, Debug)]
 pub enum MouseTabFocus {
-    InGame,
-    #[default]
-    None,
+    InGame,
+    #[default]
+    None,
 }
 
 fn mouse_player_look(
-    mut accum_mouse: ResMut<AccumulatedMouseMotion>,
-    settings: Res<MouseLookSettings>,
-    mut fps_players: Query<&mut Transform, With<FpsPlayer>>,
-    mut main_cam: Query<&mut Transform, Without<FpsPlayer>>,
+    mut accum_mouse: ResMut<AccumulatedMouseMotion>,    // Tracks how much the mouse has moved every frame.
+    settings: Res<MouseLookSettings>,                   // Get the mouse look settings
+    mut fps_players: Query<&mut Transform, With<FpsPlayer>>,    // Get the player transform
+    mut main_cam: Query<&mut Transform, Without<FpsPlayer>>,    // Get the main camera transform
 ) {
-    let delta = accum_mouse.delta;
-    if delta == Vec2::ZERO {
-        return;
-    }
+    let delta = accum_mouse.delta;  // Get how much the mouse has moved this frame
+    if delta == Vec2::ZERO {
+        return;
+    }
 
-    let delta_yaw   = -delta.x * settings.sensitivity.x;
-    let delta_pitch = -delta.y * settings.sensitivity.y;
-    const PITCH_LIMIT: f32 = FRAC_PI_2 - 0.01;
+    let delta_yaw   = -delta.x * settings.sensitivity.x;
+    let delta_pitch = -delta.y * settings.sensitivity.y;
+    const PITCH_LIMIT: f32 = FRAC_PI_2 - 0.01;
 
-    match settings.focus {
-        MouseTabFocus::InGame => {
-            for mut player in &mut fps_players {
-                apply_look(&mut player, delta_yaw, delta_pitch, PITCH_LIMIT);
-            }
-        }
-        MouseTabFocus::None => {}
-    }
+    match settings.focus {
+        MouseTabFocus::InGame => {
+             for mut player in &mut fps_players {
+                apply_look(&mut player, delta_yaw, delta_pitch, PITCH_LIMIT);
+            }
+        }
+        MouseTabFocus::None => {}
+    }
 }
 
+// Toggle mouse focus mode when Q is pressed
 fn mouse_focus_toggle(
-    keys: Res<ButtonInput<KeyCode>>,
-    mut settings: ResMut<MouseLookSettings>,
-    mut window: Query<&mut CursorOptions, With<PrimaryWindow>>,
+    keys: Res<ButtonInput<KeyCode>>,
+    mut settings: ResMut<MouseLookSettings>,
+    mut window: Query<&mut CursorOptions, With<PrimaryWindow>>,
 ) {
-    if !keys.just_pressed(KeyCode::KeyQ) {
-        return;
-    }
+    if !keys.just_pressed(KeyCode::KeyQ) {
+         return;
+    }
 
-    let Ok(mut cursor) = window.single_mut() else { return };
+    let Ok(mut cursor) = window.single_mut() else { return };
 
-    settings.focus = match settings.focus {
-        // If we are not focused,
-        // Then switch to in-game focus
-        MouseTabFocus::None => {
-            cursor.grab_mode = CursorGrabMode::Locked;
-            cursor.visible = false;
+    settings.focus = match settings.focus {
+        // If we are not focused,
+        // Then switch to in-game focus
+      MouseTabFocus::None => {
+          cursor.grab_mode = CursorGrabMode::Locked;
+          cursor.visible = false;
 
-            MouseTabFocus::InGame
-        }
+          MouseTabFocus::InGame
+      }
 
-        // If we are focused in-game,
-        // Then switch to no focus
-        MouseTabFocus::InGame => {
-            cursor.grab_mode = CursorGrabMode::None;
-            cursor.visible = true;
+      // If we are focused in-game,
+      // Then switch to no focus
+      MouseTabFocus::InGame => {
+          cursor.grab_mode = CursorGrabMode::None;
+          cursor.visible = true;
 
-            MouseTabFocus::None
-        }
-    };
+          MouseTabFocus::None
+      }
+    };
 }
 
+// Apply yaw and pitch to a transform
 fn apply_look(
-    transform: &mut Transform,
-    delta_yaw: f32,
-    delta_pitch: f32,
-    pitch_limit: f32,
+    transform: &mut Transform,
+    delta_yaw: f32,
+    delta_pitch: f32,
+    pitch_limit: f32,
 ) {
-    let (yaw, pitch, roll) = transform.rotation.to_euler(EulerRot::YXZ);
+    let (yaw, pitch, roll) = transform.rotation.to_euler(EulerRot::YXZ);
 
-    let yaw   = yaw + delta_yaw;
-    let pitch = (pitch + delta_pitch).clamp(-pitch_limit, pitch_limit);
+    let yaw   = yaw + delta_yaw;
+    let pitch = (pitch + delta_pitch).clamp(-pitch_limit, pitch_limit);
 
-    transform.rotation = Quat::from_euler(EulerRot::YXZ, yaw, pitch, roll);
+    transform.rotation = Quat::from_euler(EulerRot::YXZ, yaw, pitch, roll);
 }

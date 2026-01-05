@@ -154,23 +154,51 @@ fn spawn_character_trigger(
    // if you use the editor, I can go into how to fix that later if needed.
    // I recommend option 1 for simplicity, I tried option 2 but you need
    // custom logic to see if the camera is used in the editor view or not.
-   if player.crosshair_entity.is_none() {
-      let crosshair: Entity = commands.spawn((
-         Name::new("Crosshair"),
-         Mesh2d(meshes.add(Circle::default())),
-         MeshMaterial2d(material_2d.add(Color::from(RED))),
-         Transform::from_translation(Vec3::new(0.0, 0.0, -0.5)),
-      )).id();
+    if player.crosshair_entity.is_none() {
 
-      if let Some(camera_entity) = player.camera_entity {
-            commands.entity(camera_entity).add_child(crosshair);
-            player.crosshair_entity = Some(crosshair);
-      }
-   }
+            let crosshair: Entity = commands.spawn((
+                Name::new("Crosshair"),
+                Mesh3d(meshes.add(Circle::new(1.0))), 
+                MeshMaterial3d(materials.add(StandardMaterial {
+                    base_color: RED.into(),
+                    unlit: true, // Make it ignore lighting so it stays bright red
+                    ..default()
+                })),
+                Transform{
+                    translation: Vec3::new(0.0, 0.0, -0.2), // Place it slightly in front of camera
+                    rotation: Quat::IDENTITY,
+                    scale: Vec3::splat(0.002),
+                }
+            )).id();
+            if let Some(camera_entity) = player.camera_entity {
+                    commands.entity(camera_entity).add_child(crosshair);
+                    player.crosshair_entity = Some(crosshair);
+            }
+
+            // let crosshair = commands.spawn((
+            //     Name::new("UI Crosshair"),
+            //     Node {
+            //         position_type: PositionType::Absolute,
+            //         left: Val::Percent(50.0),
+            //         top: Val::Percent(50.0),
+            //         // Give it a physical size
+            //         width: Val::Px(5.0),
+            //         height: Val::Px(5.0),
+            //         // Align it so the center of the node is at the 50% mark
+            //         margin: UiRect::all(Val::Px(-2.5)),
+            //         ..default()
+            //     },
+            //     BackgroundColor(RED.into()),
+            //     GlobalZIndex(100),
+            // )).id();
+
+            // player.crosshair_entity = Some(crosshair);
+        
+    }
 
    // You'll notice a delay in the crosshair option 1 following the camera
    // When using space editor. Space editor spawns a 4th camera
    // for the playmode camera view, and the crosshair lags
    // behind a frame. Not a big deal for now.
-     
+
 }

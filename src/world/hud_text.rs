@@ -14,21 +14,21 @@ impl Plugin for HudTextPlugin {
 // need to be moved to different cameras to work properly.
 // See the player cursor section for more
 fn spawn_text(mut commands: Commands) {
-    let font = TextFont {
-        font_size: 25.0,
-        ..default()
-    };
-    commands.spawn((
-        Node {
-            position_type: PositionType::Absolute,
-            bottom: px(12),
-            left: px(12),
-            flex_direction: FlexDirection::Column,
-            ..default()
-        },
-        children![
-            (Text::new("Move the player with WASD"), font.clone()),
-            (Text::new("Rotate the camera with the mouse"), font)
-        ],
-    ));
+    let font = TextFont {
+        font_size: 25.0,
+        ..default()
+    };
+     commands.spawn((
+        Node {
+            position_type: PositionType::Absolute,
+            bottom: px(12),
+            left: px(12),
+            flex_direction: FlexDirection::Column,
+            ..default()
+        },
+        children![
+            (Text::new("Move the player with WASD"), font.clone()), 
+            (Text::new("Rotate the camera with the mouse"), font)
+        ],
+    ));
 }
